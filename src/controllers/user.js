@@ -9,6 +9,9 @@ const { TABLE_NAMES, SCHEMA_NAME } = require("../utilities/constants");
 
 User.schemaFuncs();
 
+                       /**
+                        * API for creating new user.
+                        */
 router.post("/create", (req, res) => {
   const Query = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.userDetails} VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`;
   const id = crypto.randomBytes(16).toString("hex");
@@ -33,5 +36,82 @@ router.post("/create", (req, res) => {
     }
   );
 });
+
+
+                /**
+                 * API for getting details of all users.
+                 */
+router.get("/", (req, res) => {
+  const Query = `SELECT * from ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}`;
+  pool.query(
+    Query,
+    (error, userDetails) => {
+      res.json({ response: userDetails.rows });
+    }
+  );
+});
+
+
+                       /**
+                        * API for getting details of particular user.
+                        */
+router.get("/:userId", (req, res) => {
+  const requestedId = `'${req.params.userId}'`;
+  const Query = `SELECT *
+                 from ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
+                 where user_id = ${requestedId}`;
+  pool.query(
+    Query,
+    (error, userDetails) => {
+      res.json({ response: userDetails.rows });
+    }
+  );
+});
+
+
+                       /**
+                        * API for updating the details of a user.
+                        */
+router.put("/:userId", (req, res) => {
+
+  const requestedId = `'${req.params.userId}'`;
+  const firstName = req.body.firstname;
+  const middleName = req.body.middlename;
+  const lastName = req.body.lastname;
+  const idType = req.body.idType;
+  const idNumber = req.body.idNumber;
+  const age = req.body.age;
+  const ageGroup = req.body.ageGroup;
+  const gender = req.body.gender;
+  const nationality = req.body.nationality;
+  const email = req.body.email;
+  const mobileNumber = req.body.mobileNumber;
+
+  const Query = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
+                 SET firstname = ${firstName},
+                     middlename = ${middleName},
+                     lastname = ${lastName},
+                     idType = ${idType},
+                     idNumber = ${idNumber},
+                     age = ${age},
+                     ageGroup = ${ageGroup},
+                     gender = ${gender},
+                     nationality = ${nationality},
+                     email = ${email},
+                     mobileNumber = ${mobileNumber}
+                  WHERE user_id = ${requestedId}`;
+  pool.query(
+    Query,
+    [requestedId, firstname, middlename, lastname, idType, idNumber, age, ageGroup, gender, nationality, email, mobileNumber],
+    (error, result) => {
+      res.json({ response : "User updated."});
+    }
+  )
+})
+
+
+
+
+
 
 module.exports = router;

@@ -22,4 +22,14 @@ router.post("/create", (req, res) => {
   );
 });
 
+router.get("/", (req, res) => {
+  const Query = `SELECT * from ${SCHEMA_NAME}.${TABLE_NAMES.address}`;
+  pool.query(
+    Query,
+    (error, addressDetails) => {
+      res.json({ response: addressDetails.rows });
+    }
+  );
+});
+
 module.exports = router;
