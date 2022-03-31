@@ -1,0 +1,18 @@
+# General
+.DS_Store
+.Trashes
+
+# Node/NPM
+/node_modules
+.npm
+
+# Project
+/dist
+/temporary
+/temp
+/logs
+*.log
+/bundle
+
+# Lock file
+package-lock.json
