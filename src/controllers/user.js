@@ -74,40 +74,42 @@ router.get("/:userId", (req, res) => {
                         */
 router.put("/:userId", (req, res) => {
 
-  const requestedId = `'${req.params.userId}'`;
+  const requestedId = req.params.userId;
   const firstName = req.body.firstname;
   const middleName = req.body.middlename;
   const lastName = req.body.lastname;
-  const idType = req.body.idType;
-  const idNumber = req.body.idNumber;
+  const idType = req.body.idtype;
+  const idNumber = req.body.idnumber;
   const age = req.body.age;
-  const ageGroup = req.body.ageGroup;
+  const ageGroup = req.body.agegroup;
   const gender = req.body.gender;
   const nationality = req.body.nationality;
   const email = req.body.email;
-  const mobileNumber = req.body.mobileNumber;
+  const mobileNumber = req.body.mobilenumber;
+
+  console.log([requestedId, firstName, middleName, lastName, idType, idNumber, age, ageGroup, gender, nationality, email, mobileNumber]);
 
   const Query = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
-                 SET firstname = ${firstName},
-                     middlename = ${middleName},
-                     lastname = ${lastName},
-                     idType = ${idType},
-                     idNumber = ${idNumber},
-                     age = ${age},
-                     ageGroup = ${ageGroup},
-                     gender = ${gender},
-                     nationality = ${nationality},
-                     email = ${email},
-                     mobileNumber = ${mobileNumber}
-                  WHERE user_id = ${requestedId}`;
+                 SET firstname = $1,
+                     middlename = $2,
+                     lastname = $3,
+                     idType = $4,
+                     idNumber = $5,
+                     age = $6,
+                     ageGroup = $7,
+                     gender = $8,
+                     nationality = $9,
+                     email = $10,
+                     mobileNumber = $11
+                WHERE user_id = $12`;
   pool.query(
     Query,
-    [requestedId, firstname, middlename, lastname, idType, idNumber, age, ageGroup, gender, nationality, email, mobileNumber],
+    [firstName, middleName, lastName, idType, idNumber, age, ageGroup, gender, nationality, email, mobileNumber, requestedId],
     (error, result) => {
       res.json({ response : "User updated."});
     }
-  )
-})
+  );
+});
 
 
 
