@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const { BASE_URL, USER, ADDRESS } = require("./src/utilities/routes");
+const { BASE_URL, USER, ADDRESS, EDUCATION, RELATIVE } = require("./src/utilities/routes");
 const userPaths = require("./src/controllers/user");
-const addressPaths = require("./src/controllers/address");
+const AddressPaths = require("./src/controllers/address");
+const EducationPaths = require("./src/controllers/education");
+const FamilyPaths = require("./src/controllers/family_details");
 const { getUrl } = require("./src/utilities/helpers");
 
 const Pool = require("pg").Pool;
@@ -19,7 +21,9 @@ app.use(BASE_URL, (req, res, next) => {
 
 // Map Model paths with controllers
 app.use(getUrl(USER), userPaths);
-app.use(getUrl(ADDRESS), addressPaths);
+app.use(getUrl(ADDRESS), AddressPaths);
+app.use(getUrl(EDUCATION), EducationPaths);
+app.use(getUrl(RELATIVE), FamilyPaths);
 
 app.use((req, res) => {
   res.status(404);

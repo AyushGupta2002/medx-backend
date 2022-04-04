@@ -3,4 +3,6 @@ module.exports = {
   AUTH: "/auth",
   USER: "/user",
   ADDRESS: "/address",
+  EDUCATION: "/education",
+  RELATIVE: "/relative",
 };

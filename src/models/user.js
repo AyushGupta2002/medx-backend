@@ -31,7 +31,12 @@ async function schemaFuncs() {
         gender TEXT,
         nationality TEXT,
         email TEXT,
-        mobileNumber INT
+        mobileNumber INT,
+        primary_occupation TEXT,
+        secondary_occupation TEXT,
+        language TEXT,
+        marital_status TEXT,
+        service_access TEXT[]
       );`;
 
       console.log("\ncreateTableSql:", createTableSql);
