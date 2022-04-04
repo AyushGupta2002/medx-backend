@@ -28,8 +28,8 @@ async function schemaFuncs() {
         city TEXT,
         pincode INT,
         postoffice TEXT,
-        isPermanent BOOLEAN,
-        isCurrent BOOLEAN,
+        ispermanent BOOLEAN,
+        iscurrent BOOLEAN,
         user_id TEXT,
         CONSTRAINT fk_${TABLE_NAMES.userDetails}
             FOREIGN KEY(user_id)
