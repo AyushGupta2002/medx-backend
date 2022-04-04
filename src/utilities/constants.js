@@ -6,6 +6,8 @@ module.exports = {
   TABLE_NAMES: {
     userDetails: "user_basic_details",
     address: "address",
+    education: "education",
+    relative: "relative_details",
   },
 
   UPDATE_TYPES: {
