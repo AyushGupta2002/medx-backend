@@ -22,4 +22,71 @@ router.post("/create", (req, res) => {
   );
 });
 
+
+router.get("/", (req, res) => {
+  const Query = `SELECT * from ${SCHEMA_NAME}.${TABLE_NAMES.relative}`;
+  pool.query(
+    Query,
+    (error, relativeDetails) => {
+      res.json({ response: relativeDetails.rows });
+    }
+  );
+});
+
+router.get("/:id", (req, res) => {
+  const requestedId = `'${req.params.id}'`;
+  const Query = `SELECT *
+                 from ${SCHEMA_NAME}.${TABLE_NAMES.relative}
+                 where relative_id = ${requestedId}`;
+  pool.query(
+    Query,
+    (error, relativeDetails) => {
+      res.json({ response: relativeDetails.rows });
+    }
+  );
+});
+
+router.put("/:id", (req, res) => {
+  const requestedId = req.params.id;
+  const {
+    relation_type,
+    firstname,
+    middlename,
+    lastname,
+    gender,
+    age,
+    age_group,
+    contact_number
+   } = req.body;
+
+
+  const Query = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.relative}
+                 SET relation_type = $1,
+                     firstname = $2,
+                     middlename = $3,
+                     lastname = $4,
+                     gender = $5,
+                     age = $6,
+                     age_group = $7,
+                     contact_number = $8
+                WHERE relative_id = $9`;
+  pool.query(
+    Query,
+    [relation_type,
+    firstname,
+    middlename,
+    lastname,
+    gender,
+    age,
+    age_group,
+    contact_number,
+    requestedId],
+    (error, result) => {
+      res.json({ response : "Family status updated."});
+    }
+  );
+});
+
+
+
 module.exports = router;

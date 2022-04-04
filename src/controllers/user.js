@@ -97,21 +97,26 @@ router.get("/:userId", (req, res) => {
                         */
 router.put("/:userId", (req, res) => {
 
+  const {
+    firstname,
+    middlename,
+    lastname,
+    idType,
+    idNumber,
+    age,
+    ageGroup,
+    gender,
+    nationality,
+    email,
+    mobileNumber,
+    primary_occupation,
+    secondary_occupation,
+    language,
+    marital_status,
+    service_access,
+  } = req.body;
+
   const requestedId = req.params.userId;
-  const firstName = req.body.firstname;
-  const middleName = req.body.middlename;
-  const lastName = req.body.lastname;
-  const idType = req.body.idtype;
-  const idNumber = req.body.idnumber;
-  const age = req.body.age;
-  const ageGroup = req.body.agegroup;
-  const gender = req.body.gender;
-  const nationality = req.body.nationality;
-  const email = req.body.email;
-  const mobileNumber = req.body.mobilenumber;
-
-  console.log([requestedId, firstName, middleName, lastName, idType, idNumber, age, ageGroup, gender, nationality, email, mobileNumber]);
-
   const Query = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
                  SET firstname = $1,
                      middlename = $2,
@@ -123,11 +128,34 @@ router.put("/:userId", (req, res) => {
                      gender = $8,
                      nationality = $9,
                      email = $10,
-                     mobileNumber = $11
-                WHERE user_id = $12`;
+                     mobileNumber = $11,
+                     primary_occupation = $12,
+                     secondary_occupation = $13,
+                     language = $14,
+                     marital_status = $15,
+                     service_access = $16
+                WHERE user_id = $17`;
   pool.query(
     Query,
-    [firstName, middleName, lastName, idType, idNumber, age, ageGroup, gender, nationality, email, mobileNumber, requestedId],
+    [
+      firstname,
+      middlename,
+      lastname,
+      idType,
+      idNumber,
+      age,
+      ageGroup,
+      gender,
+      nationality,
+      email,
+      mobileNumber,
+      primary_occupation,
+      secondary_occupation,
+      language,
+      marital_status,
+      service_access,
+      requestedId
+    ],
     (error, result) => {
       res.json({ response : "User updated."});
     }
