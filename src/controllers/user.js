@@ -49,6 +49,7 @@ router.post("/create", (req, res) => {
       secondary_occupation,
       language,
       marital_status,
+      service_access
     ],
     (error, results) => {
       res.json({ response: "user created successfully" });
