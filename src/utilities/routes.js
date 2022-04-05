@@ -5,4 +5,5 @@ module.exports = {
   ADDRESS: "/address",
   EDUCATION: "/education",
   RELATIVE: "/relative",
+  MAIN: "/"
 };

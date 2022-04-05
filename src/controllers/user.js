@@ -64,14 +64,16 @@ router.post("/create", (req, res) => {
                 /**
                  * API for getting details of all users.
                  */
-router.get("/", (req, res) => {
+router.get("/", async(req, res) => {
   const Query = `SELECT * from ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}`;
-  pool.query(
+   pool.query(
     Query,
     (error, userDetails) => {
-      res.json({ response: userDetails.rows });
+      if (error) console.log(error);
+      else res.json({ response: userDetails.rows });
     }
   );
+
 });
 
 
