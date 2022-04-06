@@ -31,7 +31,7 @@ router.post("/create", (req, res) => {
     secondary_occupation,
     language,
     marital_status,
-    service_access,
+    service_access
   } = req.body;
   pool.query(
     Query,
