@@ -147,8 +147,215 @@ router.post("/create", async(req, res) => {
   });
 });
 
+router.put("/:userId", (req, res) => {
+
+  let queryPromises = [];
+
+  const requestedId = `'${req.params.userId}'`;
+
+  // update user details
+  const Query1 = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
+                 SET firstname = $1,
+                     middlename = $2,
+                     lastname = $3,
+                     idType = $4,
+                     idNumber = $5,
+                     age = $6,
+                     ageGroup = $7,
+                     gender = $8,
+                     nationality = $9,
+                     email = $10,
+                     mobileNumber = $11,
+                     primary_occupation = $12,
+                     secondary_occupation = $13,
+                     language = $14,
+                     marital_status = $15,
+                     service_access = $16
+                WHERE user_id = $17`;
+
+  const { firstname, middlename, lastname, idType, idNumber, age, ageGroup, gender, nationality,
+    email, mobileNumber, primary_occupation, secondary_occupation, language, marital_status,
+    service_access } = req.body[0];
+
+  const values1 = [firstname, middlename, lastname, idType, idNumber, age, ageGroup, gender,
+    nationality, email, mobileNumber, primary_occupation, secondary_occupation,
+    language, marital_status, service_access,requestedId];
+
+    console.log({USER_DETAILS : values1});
+
+  queryPromises.push(pool.query(Query1, values1));
 
 
+ // update education details
+  const Query2 = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.education}
+                 SET category = $1,
+                     school_name = $2,
+                     school_passout_year = $3,
+                     college_name = $4,
+                     college_passout_year = $5,
+                     highest_degree = $6,
+                     highest_degree_passout = $7
+                WHERE user_id = $8`;
+
+  const { category, school_name,  school_passout_year, college_name, college_passout_year,
+         highest_degree, highest_degree_passout } = req.body[1];
+
+  const values2 = [category, school_name,  school_passout_year, college_name,
+        college_passout_year, highest_degree, highest_degree_passout, requestedId];
+
+  console.log({EDUCATION : values2});
+
+  queryPromises.push(pool.query(Query2, values2));
+
+
+
+  //update address details
+  // const Query3 = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.address}
+  //                SET state = $1,
+  //                    district = $2,
+  //                    taluk = $3,
+  //                    village = $4,
+  //                    city = $5,
+  //                    pincode = $6,
+  //                    postoffice = $7,
+  //                    ispermanent = $8,
+  //                    iscurrent = $9
+  //               WHERE user_id = $10 `;
+  //
+  // if (req.body.length[2] === 1) {
+  //
+  //   const { address_id, state, district, taluk, village, city, pincode, postoffice,
+  //     ispermanent, iscurrent } = req.body[2][0];
+  //
+  //   const values3 = [state, district, taluk, village, city, pincode, postoffice,
+  //     ispermanent, iscurrent, requestedId];
+  //
+  //   queryPromises.push(pool.query(Query3, values3));
+  // }
+  //
+  //
+  // else {
+  //   if ( (req.body[2][0].ispermanent && req.body[2][0].iscurrent) || (req.body[2][1].ispermanent && req.body[2][1].iscurrent) ) {
+  //     var ind, deleteInd;
+  //     // console.log(req.body[0].ispermanent);
+  //     if (req.body[2][0].ispermanent && req.body[2][0].iscurrent) {
+  //       ind = 0;
+  //       deleteInd = 1;
+  //     }
+  //     else if (req.body[2][1].ispermanent && req.body[2][1].iscurrent) {
+  //       ind = 1;
+  //       deleteInd = 0;
+  //     }
+  //
+  //     const { address_id, state, district, taluk, village, city, pincode, postoffice,
+  //       ispermanent, iscurrent } = req.body[2][ind];
+  //
+  //     const values =
+  //
+  //      const Query2 = `DELETE FROM ${SCHEMA_NAME}.${TABLE_NAMES.address}
+  //                       WHERE address_id = $1`;
+  //      pool.query(
+  //        Query2,
+  //        [req.body[deleteInd].address_id],
+  //        (error, result) => {
+  //          if (error) console.log(error);
+  //        }
+  //      );
+  //
+  //      res.json({ response : "User updated!" });
+  //   }
+  //
+  //   else if (req.body[0].ispermanent != req.body[0].iscurrent &&
+  //            req.body[1].ispermanent != req.body[1].iscurrent) {
+  //
+  //        if (req.body[0].ispermanent != req.body[0].iscurrent) {
+  //
+  //          const { address_id, state, district, taluk, village, city, pincode, postoffice,
+  //                  ispermanent, iscurrent } = req.body[0];
+  //          const requestedId = req.params.userId;
+  //          const Query1 = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.address}
+  //                                 SET state = $1,
+  //                                     district = $2,
+  //                                     taluk = $3,
+  //                                     village = $4,
+  //                                     city = $5,
+  //                                     pincode = $6,
+  //                                     postoffice = $7,
+  //                                     ispermanent = $8,
+  //                                     isCurrent = $9
+  //                                WHERE address_id = $10`;
+  //            pool.query(
+  //                Query1,
+  //                [state, district, taluk, village, city, pincode, postoffice, ispermanent, iscurrent, address_id],
+  //                (error, result) => {
+  //                    if (error) console.log(error);
+  //                }
+  //            );
+  //        }
+  //        if (req.body[1].ispermanent != req.body[1].iscurrent) {
+  //
+  //          const { address_id, state, district, taluk, village, city, pincode, postoffice,
+  //                  ispermanent, iscurrent } = req.body[1];
+  //          const requestedId = req.params.userId;
+  //          const Query1 = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.address}
+  //                                 SET state = $1,
+  //                                     district = $2,
+  //                                     taluk = $3,
+  //                                     village = $4,
+  //                                     city = $5,
+  //                                     pincode = $6,
+  //                                     postoffice = $7,
+  //                                     ispermanent = $8,
+  //                                     iscurrent = $9
+  //                                WHERE address_id = $10`;
+  //            pool.query(
+  //                Query1,
+  //                [state, district, taluk, village, city, pincode, postoffice, ispermanent, iscurrent, address_id],
+  //                (error, result) => {
+  //                    if (error) console.log(error);
+  //                }
+  //            );
+  //        }
+  //
+  //        res.json({ response : "User updated!" });
+  //
+  //   }
+  //
+  // }
+
+
+  // update family details
+  if (req.body[2]) {
+
+    const Query4 = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.relative}
+                   SET relation_type = $1,
+                       firstname = $2,
+                       middlename = $3,
+                       lastname = $4,
+                       gender = $5,
+                       age = $6,
+                       age_group = $7,
+                       contact_number = $8
+                  WHERE user_id = $9`;
+
+    const { relation_type, firstname, middlename, lastname, gender, age,
+            age_group, contact_number } = req.body[2];
+
+    const values = [relation_type, firstname, middlename, lastname, gender, age,
+             age_group, contact_number, requestedId];
+
+    console.log({RELATIVE : values});
+
+    queryPromises.push(pool.query(Query4, values));
+  }
+
+  Promise.all(queryPromises)
+  .then((result) => {
+    res.json({response : "User updated."});
+  },
+   error => console.log(error));
+
+});
 
 
 
