@@ -33,6 +33,7 @@ router.post("/create", (req, res) => {
     marital_status,
     service_access
   } = req.body;
+
   pool.query(
     Query,
     [
@@ -85,6 +86,7 @@ router.get("/:userId", (req, res) => {
   const Query = `SELECT *
                  from ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
                  where user_id = ${requestedId}`;
+   console.log(Query);
   pool.query(
     Query,
     (error, userDetails) => {
