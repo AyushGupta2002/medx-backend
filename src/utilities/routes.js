@@ -8,5 +8,6 @@ module.exports = {
   BANK: "/bank",
   FINANCE: "/finance",
   SERVICE: "/service",
+  PINCODE: "/pincode",
   MAIN: "/"
 };

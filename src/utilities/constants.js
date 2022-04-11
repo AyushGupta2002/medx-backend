@@ -10,7 +10,8 @@ module.exports = {
     relative: "relative_details",
     bank: "bank_details",
     finance: "financial_details",
-    service: "service_access"
+    service: "service_access",
+    pincode : "pincode_details"
   },
 
   UPDATE_TYPES: {
