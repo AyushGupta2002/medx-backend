@@ -1,11 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const { BASE_URL, USER, ADDRESS, EDUCATION, RELATIVE, MAIN } = require("./src/utilities/routes");
+const { BASE_URL, USER, ADDRESS, EDUCATION, RELATIVE, BANK, FINANCE, SERVICE, MAIN } = require("./src/utilities/routes");
 const userPaths = require("./src/controllers/user");
 const AddressPaths = require("./src/controllers/address");
 const EducationPaths = require("./src/controllers/education");
 const FamilyPaths = require("./src/controllers/family_details");
+const BankPaths = require("./src/controllers/bank_details");
+const FinancePaths = require("./src/controllers/financial_details");
+const ServicePaths = require("./src/controllers/service_access");
 const MainPaths = require("./src/controllers/main");
 const { getUrl } = require("./src/utilities/helpers");
 
@@ -26,7 +29,10 @@ app.use(getUrl(USER), userPaths);
 app.use(getUrl(ADDRESS), AddressPaths);
 app.use(getUrl(EDUCATION), EducationPaths);
 app.use(getUrl(RELATIVE), FamilyPaths);
+app.use(getUrl(FINANCE), FinancePaths);
+app.use(getUrl(SERVICE), ServicePaths);
 app.use(getUrl(MAIN), MainPaths);
+app.use(getUrl(BANK), BankPaths);
 
 app.use((req, res) => {
   res.status(404);

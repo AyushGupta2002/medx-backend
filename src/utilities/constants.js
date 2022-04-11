@@ -8,6 +8,9 @@ module.exports = {
     address: "address",
     education: "education",
     relative: "relative_details",
+    bank: "bank_details",
+    finance: "financial_details",
+    service: "service_access"
   },
 
   UPDATE_TYPES: {

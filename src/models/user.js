@@ -35,8 +35,7 @@ async function schemaFuncs() {
         primary_occupation TEXT,
         secondary_occupation TEXT,
         language TEXT,
-        marital_status TEXT,
-        service_access TEXT[]
+        marital_status TEXT
       );`;
 
       console.log("\ncreateTableSql:", createTableSql);

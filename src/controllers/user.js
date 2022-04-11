@@ -13,7 +13,7 @@ User.schemaFuncs();
                         * API for creating new user.
                         */
 router.post("/create", (req, res) => {
-  const Query = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.userDetails} VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`;
+  const Query = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.userDetails} VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`;
   const id = crypto.randomBytes(16).toString("hex");
   const {
     firstname,
@@ -30,8 +30,7 @@ router.post("/create", (req, res) => {
     primary_occupation,
     secondary_occupation,
     language,
-    marital_status,
-    service_access
+    marital_status
   } = req.body;
 
   pool.query(
@@ -52,8 +51,7 @@ router.post("/create", (req, res) => {
       primary_occupation,
       secondary_occupation,
       language,
-      marital_status,
-      service_access
+      marital_status
     ],
     (error, results) => {
       res.json({ response: "user created successfully" });
@@ -86,7 +84,6 @@ router.get("/:userId", (req, res) => {
   const Query = `SELECT *
                  from ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
                  where user_id = ${requestedId}`;
-   console.log(Query);
   pool.query(
     Query,
     (error, userDetails) => {
@@ -116,8 +113,7 @@ router.put("/:userId", (req, res) => {
     primary_occupation,
     secondary_occupation,
     language,
-    marital_status,
-    service_access,
+    marital_status
   } = req.body;
 
   const requestedId = req.params.userId;
@@ -136,9 +132,8 @@ router.put("/:userId", (req, res) => {
                      primary_occupation = $12,
                      secondary_occupation = $13,
                      language = $14,
-                     marital_status = $15,
-                     service_access = $16
-                WHERE user_id = $17`;
+                     marital_status = $15
+                WHERE user_id = $16`;
   pool.query(
     Query,
     [
@@ -156,8 +151,7 @@ router.put("/:userId", (req, res) => {
       primary_occupation,
       secondary_occupation,
       language,
-      marital_status,
-      service_access,
+      marital_status, 
       requestedId
     ],
     (error, result) => {
