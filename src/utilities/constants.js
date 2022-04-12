@@ -11,7 +11,8 @@ module.exports = {
     bank: "bank_details",
     finance: "financial_details",
     service: "service_access",
-    pincode : "pincode_details"
+    pincode : "pincode_details",
+    health : "health_history"
   },
 
   UPDATE_TYPES: {

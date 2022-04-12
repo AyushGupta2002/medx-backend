@@ -5,6 +5,7 @@ const router = express.Router();
 const Pool = require("pg").Pool;
 const crypto = require("crypto");
 const { TABLE_NAMES, SCHEMA_NAME } = require("../utilities/constants");
+const { convertArrayToString } = require("../utilities/helpers");
 const { pool } = require("../../pool_connection");
 const Address = require("../models/address");
 const Education = require("../models/education");
@@ -13,6 +14,8 @@ const User = require("../models/user");
 const Bank = require("../models/bank_details");
 const Finance = require("../models/financial_details");
 const Service = require("../models/service_access");
+const Health = require("../models/health_history");
+
 const { user } = require("pg/lib/defaults");
 
 User.schemaFuncs();
@@ -22,16 +25,10 @@ Address.schemaFuncs();
 Bank.schemaFuncs();
 Finance.schemaFuncs();
 Service.schemaFuncs();
+Health.schemaFuncs();
 
 router.post("/create", async(req, res) => {
 
-  User.schemaFuncs();
-  Relative.schemaFuncs();
-  Education.schemaFuncs();
-  Address.schemaFuncs();
-  Bank.schemaFuncs();
-  Finance.schemaFuncs();
-  Service.schemaFuncs();
 
    let userQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.userDetails} (user_id, firstname, middlename, lastname, idtype, idnumber, age, agegroup, gender, nationality, email, mobilenumber, primary_occupation, secondary_occupation, language, marital_status) VALUES `;
    let educationQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.education} (education_id, category, school_name, school_passout_year, college_name, college_passout_year, highest_degree, highest_degree_passout, user_id) VALUES `;
@@ -40,7 +37,7 @@ router.post("/create", async(req, res) => {
    let bankQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.bank} (bank_id, bank_name, account_number, IFSC, branch_name, user_id) VALUES `;
    let financeQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.finance} (finance_id, income_source, annual_income, monthly_income, user_id) VALUES `;
    let serviceQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.service} (service_id, electricity, internet, cooking_gas, water, healthcare_center, school, govt_schemes, user_id) VALUES `;
-
+   let healthQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.health} (health_id, disabilities, injuries, suffer_from_diseases, habbits, suffer_from_medical_condition, allergies, childhood_diseases, ongoing_treatment, pregnant, covid_test, suffer_from_allergy, allergy_details, turned_down_for_insurance, family_member_have_issue, user_id) VALUES `;
 
    req.body.forEach(user => {
 
@@ -141,17 +138,33 @@ router.post("/create", async(req, res) => {
 
      const { electricity, internet, cooking_gas, water, healthcare_center, school, govt_schemes } = user.service_access;
 
-     let govtSchemes = '{';
-     govt_schemes.forEach(scheme => {
-        govtSchemes = govtSchemes + `"${scheme}", `;
-     });
-     if (govtSchemes) {
-        govtSchemes = govtSchemes.slice(0,-2);
-     }
-     govtSchemes = govtSchemes + '}';
+     const govtSchemes = convertArrayToString(govt_schemes);
 
      let  remServiceQuery = `('${service_id}', '${electricity}', '${internet}', '${cooking_gas}', '${water}', '${healthcare_center}', '${school}', '${govtSchemes}', '${userId}' ), `;
      serviceQuery = serviceQuery + remServiceQuery;
+
+   }
+
+   // completing healthQuery
+
+   if (user.health_history) {
+
+     const health_id = crypto.randomBytes(16).toString("hex");
+
+     const { disabilities, injuries, suffer_from_diseases, habbits, suffer_from_medical_condition,
+         allergies, childhood_diseases, ongoing_treatment, pregnant, covid_test, suffer_from_allergy,
+         allergy_details, turned_down_for_insurance, family_member_have_issue } = user.health_history;
+
+     const disability = convertArrayToString(disabilities);
+     const injury = convertArrayToString(injuries);
+     const diseases = convertArrayToString(suffer_from_diseases);
+     const habbit = convertArrayToString(habbits);
+     const medical_condition = convertArrayToString(suffer_from_medical_condition);
+     const allergy = convertArrayToString(allergies);
+     const childhood_disease = convertArrayToString(childhood_diseases);
+
+     let  remHealthQuery = `('${health_id}', '${disability}', '${injury}', '${diseases}', '${habbit}', '${medical_condition}', '${allergy}', '${childhood_disease}', '${ongoing_treatment}', '${pregnant}', '${covid_test}', '${suffer_from_allergy}', '${allergy_details}', '${turned_down_for_insurance}', '${family_member_have_issue}', '${userId}' ), `;
+     healthQuery = healthQuery + remHealthQuery;
 
    }
 
@@ -165,9 +178,7 @@ router.post("/create", async(req, res) => {
   const finalBankQuery = bankQuery.slice(0,-2);
   const finalFinanceQuery = financeQuery.slice(0,-2);
   const finalServiceQuery = serviceQuery.slice(0,-2);
-
-  console.log([{finalUserQuery}, {finalAddressQuery}, {finalRelativeQuery}, {finalEducationQuery},
-               {finalBankQuery}, {finalFinanceQuery}, {finalServiceQuery}]);
+  const finalHealthQuery = healthQuery.slice(0, -2);
 
    const query = await pool.query(finalUserQuery, (e, result) => {
      if (e) console.log(e);
@@ -179,7 +190,8 @@ router.post("/create", async(req, res) => {
          pool.query(finalEducationQuery),
          pool.query(finalBankQuery),
          pool.query(finalFinanceQuery),
-         pool.query(finalServiceQuery)
+         pool.query(finalServiceQuery),
+         pool.query(finalHealthQuery)
        ];
 
        Promise.all(queryPromises)

@@ -188,6 +188,20 @@ const populateDependencyObject = async (req, data, key, idKey, model, JsonFormat
 
 const genRandomHexCode = (size) => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
 
+function convertArrayToString(arr) {
+  let result = '{';
+  arr.forEach(el => {
+     result = result + `"${el}", `;
+  });
+  if (arr) {
+      result = result.slice(0,-2);
+  }
+  result = result + '}';
+  return result;
+}
+
+
+
 module.exports = {
   getUrl,
   getAdminUrl,
@@ -207,4 +221,5 @@ module.exports = {
   genRandomHexCode,
   populateDependencyArray,
   populateDependencyObject,
+  convertArrayToString
 };
