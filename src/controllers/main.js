@@ -473,7 +473,6 @@ router.put("/update", (req, res) => {
   error => console.log(error));
 
   res.json({ response : "User updated successfully." });
-  
 
 
 
