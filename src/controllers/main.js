@@ -210,6 +210,270 @@ router.post("/create", async(req, res) => {
 
 router.put("/update", (req, res) => {
 
+    var queryPromises = [];
+
+    req.body.forEach(user => {
+
+      //updating basic details
+
+      const { user_id, firstname, middlename, lastname, idType, idNumber, age, ageGroup, gender, nationality,
+              email, mobileNumber, primary_occupation, secondary_occupation, language,
+              marital_status } = user.basic_details;
+
+       const userUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.userDetails}
+                                SET  firstname = '${firstname}',
+                                middlename = '${middlename}',
+                                lastname = '${lastname}',
+                                idType = '${idType}',
+                                idNumber = '${idNumber}',
+                                age = ${age},
+                                gender = '${gender}',
+                                ageGroup = '${ageGroup}',
+                                nationality = '${nationality}',
+                                email = '${email}',
+                                mobileNumber = ${mobileNumber},
+                                primary_occupation = '${primary_occupation}',
+                                secondary_occupation = '${secondary_occupation}',
+                                language = '${language}',
+                                marital_status = '${marital_status}'
+                                WHERE user_id = '${user_id}'`;
+
+       queryPromises.push(pool.query(userUpdateQuery));
+
+
+       //updating education details
+
+       const { edu_id, category, school_name,  school_passout_year, college_name, college_passout_year,
+         highest_degree, highest_degree_passout } = user.education_details;
+
+
+         const educationUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.education}
+                                       SET category = '${category}',
+                                       school_name = '${school_name}',
+                                       school_passout_year = '${school_passout_year}',
+                                       college_name = '${college_name}',
+                                       college_passout_year = '${college_passout_year}',
+                                       highest_degree = ${highest_degree},
+                                       highest_degree_passout = '${highest_degree_passout}'
+                                       WHERE education_id = '${edu_id}'`;
+
+        queryPromises.push(pool.query(educationUpdateQuery));
+
+
+        // updating relative details
+
+        user.relative_details.forEach(relative => {
+
+          const { relative_id, relation_type, firstname, middlename, lastname, gender, age, age_group,
+            contact_number } = relative;
+
+          const relativeUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.relative}
+                                       SET relation_type = '${relation_type}',
+                                       firstname = '${firstname}',
+                                       middlename = '${middlename}',
+                                       lastname = '${lastname}',
+                                       gender = '${gender}',
+                                       age = ${age},
+                                       age_group = '${age_group}',
+                                       contact_number = ${contact_number}
+                                       WHERE relative_id = '${relative_id}'`;
+
+           queryPromises.push(pool.query(relativeUpdateQuery));
+        });
+
+
+        //updating bank details
+
+        const { bank_id, bank_name, account_number, IFSC, branch_name } = user.bank_details;
+
+        const bankUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.bank}
+                                 SET bank_name = '${bank_name}',
+                                 account_number = '${account_number}',
+                                 IFSC = '${IFSC}',
+                                 branch_name = '${branch_name}'
+                                 WHERE bank_id = '${bank_id}'`;
+
+
+
+       queryPromises.push(pool.query(bankUpdateQuery));
+
+
+       //updating finance details
+
+       const { finance_id, income_source, annual_income, monthly_income } = user.finance_details;
+
+       const financeUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.finance}
+                                   SET income_source = '${income_source}',
+                                   annual_income = '${annual_income}',
+                                   monthly_income = '${monthly_income}'
+                                   WHERE finance_id = '${finance_id}'`;
+
+
+       queryPromises.push(pool.query(financeUpdateQuery));
+
+
+      //updating service details
+
+      const { service_id, electricity, internet, cooking_gas, water, healthcare_center, school, govt_schemes } = user.service_access;
+
+      const govtSchemes = convertArrayToString(govt_schemes);
+
+      const serviceUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.service}
+                                  SET electricity = '${electricity}',
+                                  internet = '${internet}',
+                                  cooking_gas = '${cooking_gas}',
+                                  water = '${water}',
+                                  healthcare_center = '${healthcare_center}',
+                                  school = '${school}',
+                                  govt_schemes = '${govtSchemes}'
+                                  WHERE service_id = '${service_id}'`;
+
+
+     queryPromises.push(pool.query(serviceUpdateQuery));
+
+
+     //updating health details
+
+     const { health_id, disabilities, injuries, suffer_from_diseases, habbits, suffer_from_medical_condition,
+         allergies, childhood_diseases, ongoing_treatment, pregnant, covid_test, suffer_from_allergy,
+         allergy_details, turned_down_for_insurance, family_member_have_issue } = user.health_history;
+
+     const disability = convertArrayToString(disabilities);
+     const injury = convertArrayToString(injuries);
+     const diseases = convertArrayToString(suffer_from_diseases);
+     const habbit = convertArrayToString(habbits);
+     const medical_condition = convertArrayToString(suffer_from_medical_condition);
+     const allergy = convertArrayToString(allergies);
+     const childhood_disease = convertArrayToString(childhood_diseases);
+
+     const healthUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.health}
+                                SET disabilities = '${disability}',
+                                injuries = '${injury}',
+                                suffer_from_diseases = '${diseases}',
+                                habbits = '${habbit}',
+                                suffer_from_medical_condition = '${medical_condition}',
+                                allergies = '${allergy}',
+                                childhood_diseases = '${childhood_disease}',
+                                ongoing_treatment = '${ongoing_treatment}',
+                                pregnant = '${pregnant}',
+                                covid_test = '${covid_test}',
+                                suffer_from_allergy = '${suffer_from_allergy}',
+                                allergy_details = '${allergy_details}',
+                                turned_down_for_insurance = '${turned_down_for_insurance}',
+                                family_member_have_issue = '${family_member_have_issue}'
+                                WHERE health_id = '${health_id}'`;
+
+
+      queryPromises.push(pool.query(healthUpdateQuery));
+
+
+      // updating address details
+
+      if (user.address_details.length === 1) {
+
+        const { address_id, state, district, taluk, village, city, pincode, postoffice,
+          ispermanent, iscurrent } = user.address_details[0];
+
+        const addressUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.address}
+                                    SET state = '${state}',
+                                    district = '${district}',
+                                    taluk = '${taluk}',
+                                    village = '${village}',
+                                    city = '${city}',
+                                    pincode = '${pincode}',
+                                    postoffice = '${postoffice}',
+                                    ispermanent = '${ispermanent}',
+                                    iscurrent = '${iscurrent}'
+                                    WHERE address_id = '${address_id}'`;
+
+        queryPromises.push(pool.query(addressUpdateQuery));
+      }
+
+      else {
+
+        if ( (user.address_details[0].ispermanent && user.address_details[0].iscurrent) ||
+             (user.address_details[1].ispermanent && user.address_details[1].iscurrent) ) {
+
+          var ind, deleteInd;
+
+          if (user.address_details[0].ispermanent && user.address_details[0].iscurrent) {
+            ind = 0;
+            deleteInd = 1;
+          }
+          else  {
+            ind = 1;
+            deleteInd = 0;
+          }
+
+          const { address_id, state, district, taluk, village, city, pincode, postoffice,
+            ispermanent, iscurrent } = user.address_details[ind];
+
+            const addressUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.address}
+                                        SET state = '${state}',
+                                        district = '${district}',
+                                        taluk = '${taluk}',
+                                        village = '${village}',
+                                        city = '${city}',
+                                        pincode = '${pincode}',
+                                        postoffice = '${postoffice}',
+                                        ispermanent = '${ispermanent}',
+                                        iscurrent = '${iscurrent}'
+                                        WHERE address_id = '${address_id}'`;
+
+            queryPromises.push(pool.query(addressUpdateQuery));
+
+            const deleteAddressQuery = `DELETE FROM ${SCHEMA_NAME}.${TABLE_NAMES.address}
+                                        WHERE address_id = '${user.address_details[deleteInd].address_id}'`;
+
+            queryPromises.push(pool.query(deleteAddressQuery));
+        }
+
+        else  {
+
+        user.address_details.forEach(address => {
+
+          const { state, district, taluk, village, city, pincode, postoffice, ispermanent,
+            iscurrent } = address;
+
+          if (address.address_id) {
+
+            const addressUpdateQuery = `UPDATE ${SCHEMA_NAME}.${TABLE_NAMES.address}
+                                        SET state = '${state}',
+                                        district = '${district}',
+                                        taluk = '${taluk}',
+                                        village = '${village}',
+                                        city = '${city}',
+                                        pincode = '${pincode}',
+                                        postoffice = '${postoffice}',
+                                        ispermanent = '${ispermanent}',
+                                        iscurrent = '${iscurrent}'
+                                        WHERE address_id = '${address.address_id}'`;
+
+            queryPromises.push(pool.query(addressUpdateQuery));
+
+          }
+
+          else {
+
+            let createAddressQuery = `INSERT INTO ${SCHEMA_NAME}.${TABLE_NAMES.address} (address_id, state, district, taluk, village, city, pincode, postoffice, ispermanent, iscurrent, user_id)
+                                      VALUES ('${address_id}', '${state}', '${district}', '${taluk}', '${village}', '${city}', ${pincode}, '${postoffice}', '${ispermanent}', '${iscurrent}', '${user.basic_details.user_id}' )`;
+
+            queryPromises.push(pool.query(createAddressQuery));
+
+          }
+        });
+      }
+    }
+
+  });
+
+  Promise.all(queryPromises)
+  .then((result) => {
+ },
+  error => console.log(error));
+
+  res.json({ response : "User updated successfully." });
+
 
 
 });
