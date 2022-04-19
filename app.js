@@ -25,7 +25,15 @@ app.use(BASE_URL, (req, res, next) => {
   console.info(req.method, req.url);
   next();
 });
-
+const cors = require('cors');
+const corsOptions = {
+  origin(origin, callback) {
+    callback(null, true);
+  },
+  credentials: true,
+  exposedHeaders: 'Content-disposition, x-suggested-filename',
+};
+app.use(cors(corsOptions));
 // Map Model paths with controllers
 app.use(getUrl(USER), userPaths);
 app.use(getUrl(ADDRESS), AddressPaths);
@@ -46,4 +54,4 @@ app.use((req, res) => {
 });
 
 console.log("App is now ready on localhost:3000");
-app.listen(3000);
+app.listen(3002);
